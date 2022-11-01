@@ -148,8 +148,8 @@ void merge(int arr[], int start, int middle, int end)
     // Equanto houver elementos em ambos os subvetores. É interrompido quando um dos subvetores acabam
     while (start_1 <= middle && start_2 <= end)
     {
-        // Comparo o primeiro valor dispinível de um subvetor com primeiro valor disponível do outro
-        // Salvo o menor valor no vetor auxiliar e passo para o próximo elemento do vetor auxliar e da metade que tiver tirado o menor
+        /* Comparo o primeiro valor dispinível de um subvetor com primeiro valor disponível do outro
+        Salvo o menor valor no vetor auxiliar e passo para o próximo elemento do vetor auxliar e da metade que tiver tirado o menor valor */
         if (arr[start_1] < arr[start_2])
         {
             arrAux[start_aux] = arr[start_1];
@@ -165,7 +165,7 @@ void merge(int arr[], int start, int middle, int end)
 
     // Caso ainda haja elementos no primeiro subvetor, vou salvando no vetor auxiliar os números restantes
     while (start_1 <= middle)
-    { // Caso ainda haja elementos na primeira metade
+    {
         arrAux[start_aux] = arr[start_1];
         start_aux++;
         start_1++;
@@ -173,7 +173,7 @@ void merge(int arr[], int start, int middle, int end)
 
     // Caso ainda haja elementos no segundo subvetor, vou salvando no vetor auxiliar os números restantes
     while (start_2 <= end)
-    { // Caso ainda haja elementos na segunda metade
+    {
         arrAux[start_aux] = arr[start_2];
         start_aux++;
         start_2++;
@@ -193,7 +193,7 @@ void mergeSort(int arr[], int start, int end)
 { // O vetor será dividido até restar um elemento
     if (start < end)
     {
-        int middle = floor((end + start) / 2); // Calculo meio do vetor
+        int middle = floor((end + start) / 2); // Cálculo meio do vetor
 
         mergeSort(arr, start, middle);
         mergeSort(arr, middle + 1, end);
@@ -218,7 +218,7 @@ Recursão no lado não vazio
 Se o vetor estivesse desordenado em cada passo iria ordenar mais números
 */
 
-// function to find the partition position
+// Função que particiona o vetor
 int partition(int array[], int initial, int end)
 {
 

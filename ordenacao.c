@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
+#include <locale.h>
 
-// Utility functions
+// -----------------------------Utility Functions-----------------------------
 
 int *spaceAlocation(int n)
 {
@@ -26,9 +27,6 @@ void swap(int *xp, int *yp)
     *yp = temp;
 }
 
-// _______________________________Sorting Algorithms______________________________
-
-/* Function to print an array */
 void printArray(int arr[], int size)
 {
     int i;
@@ -37,19 +35,54 @@ void printArray(int arr[], int size)
     printf("\n");
 }
 
-// A function to implement bubble sort
+// _______________________________Sorting Algorithms______________________________
+
+// A function to implement Bubble Sort
+/*[PT-BR]
+BUBBLE SORT
+O Bubble Sort é um algoritmo de ordenação simples. Este algoritmo percorre o vetor várias vezes,
+e a cada passagem compara pares de elementos adjacentes e os troca de posição caso estejam em ordem errada.
+O algoritmo só para quando não houver mais trocas a serem feitas, o que significa que o vetor está ordenado.
+*/
+
 void bubbleSort(int arr[], int n)
 {
     int i, j;
     for (i = 0; i < n - 1; i++)
 
-        // Last i elements are already in place
+        // Ultimos i elementos já estão no lugar certo
         for (j = 0; j < n - i - 1; j++)
             if (arr[j] > arr[j + 1])
                 swap(&arr[j], &arr[j + 1]);
 }
 
-// A function to implement isertion sort
+// Optimized version of Bubble Sort
+void bubbleSortOpt(int arr[], int n)
+{
+    int flag = 1;
+    int i, j;
+    for (i = 0; i < n - 1 && flag == 1; i++)
+    {
+        flag = 0; // flag = 0 significa que não houve troca
+        for (j = 0; j < n - i - 1; j++)
+        {
+            if (arr[j] > arr[j + 1])
+            {
+                swap(&arr[j], &arr[j + 1]);
+                flag = 1; // flag = 1 significa que houve troca
+            }
+        }
+    }
+}
+
+// A function to implement Insertion sort
+
+/*[PT-BR]
+INSERTION SORT
+O funcionamento do algoritmo é bem simples: consiste em cada passo a partir do segundo
+elemento selecionar o próximo item da sequência e colocá-lo no local apropriado de acordo
+com o critério de ordenação.
+*/
 void insertionSort(int arr[], int n)
 {
     int i, key, j;
@@ -58,9 +91,7 @@ void insertionSort(int arr[], int n)
         key = arr[i];
         j = i - 1;
 
-        /* Move elements of arr[0..i-1], that are
-        greater than key, to one position ahead
-          of their current position */
+        /* Move os elementos do arr[0..i-1], que são maiores que a chave, para uma posição à frente da sua posição atual */
         while (j >= 0 && arr[j] > key)
         {
             arr[j + 1] = arr[j];
@@ -70,76 +101,213 @@ void insertionSort(int arr[], int n)
     }
 }
 
-// A function to implement selection sort
+// A function to implement Selection Sort
+/*[PT-BR]
+SELECTION SORT
+A ordenação por seleção ou selection sort consiste em selecionar o menor item e colocar na primeira posição, selecionar
+ o segundo menor item e colocar na segunda posição, segue estes passos até que reste um único elemento. */
+
 void selectionSort(int arr[], int n)
 {
     int i, j, min_idx;
 
-    // One by one move boundary of unsorted subarray
+    // Um por um move o limite do vetor não ordenado
     for (i = 0; i < n - 1; i++)
     {
-        // Find the minimum element in unsorted array
+        // Encontra o menor elemento no vetor não ordenado
         min_idx = i;
         for (j = i + 1; j < n; j++)
             if (arr[j] < arr[min_idx])
                 min_idx = j;
 
-        // Swap the found minimum element with the first element
+        // Troca o menor elemento encontrado com o primeiro elemento
         if (min_idx != i)
             swap(&arr[min_idx], &arr[i]);
     }
 }
 
-// A function to implement quick sort
+// A function to implement Merge Sort
+
+/*
+[PT-BR]
+MERGE SORT
+Lema: Dividir para conquistar!
+Procedimento: Dividir no meio até sobrar um elemento. Depois os elementos vão sendo combinados/mergeados de forma ordenada.
+Recursão
+Vantagens: complexidade de tempo, tanto no melhor, quanto no pior caso é de O(n log n).No melhor caso
+ou médio, é equivalente à complexidade do Quick Sort;
+Desvantagem: Faz uso de n unidades O(n) de memória auxiliar. É necessário um vetor auxiliar.
+*/
+
+void merge(int arr[], int start, int middle, int end)
+{
+    int start_1 = start, start_2 = middle + 1, start_aux = 0, length = end - start + 1;
+    int *arrAux;
+    arrAux = (int *)malloc(length * sizeof(int));
+
+    // Equanto houver elementos em ambos os subvetores. É interrompido quando um dos subvetores acabam
+    while (start_1 <= middle && start_2 <= end)
+    {
+        // Comparo o primeiro valor dispinível de um subvetor com primeiro valor disponível do outro
+        // Salvo o menor valor no vetor auxiliar e passo para o próximo elemento do vetor auxliar e da metade que tiver tirado o menor
+        if (arr[start_1] < arr[start_2])
+        {
+            arrAux[start_aux] = arr[start_1];
+            start_1++;
+        }
+        else
+        {
+            arrAux[start_aux] = arr[start_2];
+            start_2++;
+        }
+        start_aux++;
+    }
+
+    // Caso ainda haja elementos no primeiro subvetor, vou salvando no vetor auxiliar os números restantes
+    while (start_1 <= middle)
+    { // Caso ainda haja elementos na primeira metade
+        arrAux[start_aux] = arr[start_1];
+        start_aux++;
+        start_1++;
+    }
+
+    // Caso ainda haja elementos no segundo subvetor, vou salvando no vetor auxiliar os números restantes
+    while (start_2 <= end)
+    { // Caso ainda haja elementos na segunda metade
+        arrAux[start_aux] = arr[start_2];
+        start_aux++;
+        start_2++;
+    }
+
+    // Copio os elementos do vetor auxiliar para o vetor original
+    for (start_aux = start; start_aux <= end; start_aux++)
+    {
+        arr[start_aux] = arrAux[start_aux - start];
+    }
+
+    // Libero a memória alocada para o vetor auxiliar
+    free(arrAux);
+}
+
+void mergeSort(int arr[], int start, int end)
+{ // O vetor será dividido até restar um elemento
+    if (start < end)
+    {
+        int middle = floor((end + start) / 2); // Calculo meio do vetor
+
+        mergeSort(arr, start, middle);
+        mergeSort(arr, middle + 1, end);
+        merge(arr, start, middle, end);
+    }
+}
+
+// A function to implement Quick Sort
+/*
+[PT-BR]
+QUICK SORT
+
+Escolhe um elemento como pivô
+Aloca na esquerda do pivô os valores menores do que ele e na direita os valores maiores
+No final do algoritmo o pivô estará na posição correta
+Recursão: Divide duas partes, escolhe novo pivô e faz o mesmo procedimento
+Vantagens: Não necessita de Vetor Auxilar (não gasta memória extra) e no melhor caso apresenta complexidade O(n log n).
+Desvantagem: pode apresentar, no pior caso, O(n²)
+Pior caso - vetor ordenado ou quase ordenado
+Ao escolher o pivô em extremidades, um lado fica vazio e outro fica com tamanho n-1
+Recursão no lado não vazio
+Se o vetor estivesse desordenado em cada passo iria ordenar mais números
+*/
+
 // function to find the partition position
-int partition(int array[], int low, int high)
+int partition(int array[], int initial, int end)
 {
 
-    // select the rightmost element as pivot
-    int pivot = array[high];
+    /* Seleciona o último elemento como pivô */
+    int pivot = array[end];
 
-    // pointer for greater element
-    int i = (low - 1);
+    /* Índice para o maior elemento */
+    int left = (initial - 1);
 
-    // traverse each element of the array
-    // compare them with the pivot
-    for (int j = low; j < high; j++)
+    for (int right = initial; right < end; right++)
     {
-        if (array[j] <= pivot)
+        if (array[right] <= pivot)
         {
 
-            // if element smaller than pivot is found
-            // swap it with the greater element pointed by i
-            i++;
-
-            // swap element at i with element at j
-            swap(&array[i], &array[j]);
+            /* Se um elemento menor que o pivô é encontrado, troca ele com o maior elemento apontado por left */
+            left++;
+            swap(&array[left], &array[right]);
         }
     }
 
-    // swap the pivot element with the greater element at i
-    swap(&array[i + 1], &array[high]);
+    // troca o elemento maior com o pivô
+    swap(&array[left + 1], &array[end]);
 
-    // return the partition point
-    return (i + 1);
+    // retorna a posição do pivô
+    return (left + 1);
 }
 
-void quickSort(int array[], int low, int high)
+void quickSort(int array[], int initial, int end)
 {
-    if (low < high)
+    if (initial < end)
     {
+        /* encontre o elemento pivô de modo que os elementos menores que o pivô estejam
+        à esquerda dele e os elementos maiores que o pivô estejam à direita */
+        int partition_idx = partition(array, initial, end);
 
-        // find the pivot element such that
-        // elements smaller than pivot are on left of pivot
-        // elements greater than pivot are on right of pivot
-        int pi = partition(array, low, high);
+        // Chamada recursiva para os elementos a esquerda do pivô
+        quickSort(array, initial, partition_idx - 1);
 
-        // recursive call on the left of pivot
-        quickSort(array, low, pi - 1);
-
-        // recursive call on the right of pivot
-        quickSort(array, pi + 1, high);
+        // Chamada recursiva para os elementos a direita do pivô
+        quickSort(array, partition_idx + 1, end);
     }
+}
+
+// _______________________________Menu Function______________________________
+
+void menu(int op, int arr[], int n)
+{
+    do
+    {
+        printf("\n\tQual metodo de ordencao voce quer usar?\n\n");
+        printf("1. Bubble Sort\n");
+        printf("2. Bubble Sort Optimized\n");
+        printf("3. Insertion Sort\n");
+        printf("4. Selection Sort\n");
+        printf("5. Merge Sort\n");
+        printf("6. Quick Sort\n");
+        printf("7. Sair do programa\n");
+
+        scanf("%d", &op);
+        system("cls || clear");
+
+        switch (op)
+        {
+        case 1:
+            bubbleSort(arr, n);
+            break;
+        case 2:
+            bubbleSortOpt(arr, n);
+            break;
+        case 3:
+            insertionSort(arr, n);
+            break;
+        case 4:
+            selectionSort(arr, n);
+            break;
+        case 5:
+            mergeSort(arr, 0, n - 1);
+            break;
+        case 6:
+            quickSort(arr, 0, n - 1);
+            break;
+        case 7:
+            printf("Saindo do programa...\n");
+            break;
+        default:
+            printf("Digite uma opcao valida\n");
+        }
+
+    } while (op != 7);
 }
 
 // _______________________________Main Function______________________________
@@ -149,55 +317,11 @@ int main()
     int op;
     int n;
 
-    printf("Quantos registros você quer inserir no vetor?\n");
+    printf("Quantos registros voce quer inserir no vetor?\n");
     scanf("%d", &n);
     int *arr = spaceAlocation(n);
     generateNumbers(arr, n);
-    printArray(arr, n);
-
-    do
-    {
-        printf("\n\tQual método de ordenação você quer usar?\n\n");
-        printf("1. Bubble Sort\n");
-        printf("2. Insertion Sort\n");
-        printf("3. Selection Sort\n");
-        printf("4. Merge Sort\n");
-        printf("5. Quick Sort\n");
-        printf("6. Sair do programa\n");
-
-        scanf("%d", &op);
-        system("cls || clear");
-
-        switch (op)
-        {
-        case 1:
-            bubbleSort(arr, n);
-            printf("Sorted array: \n");
-            printArray(arr, n);
-            break;
-        case 2:
-            insertionSort(arr, n);
-            printf("Sorted array: \n");
-            printArray(arr, n);
-            break;
-        case 3:
-            selectionSort(arr, n);
-            printf("Sorted array: \n");
-            printArray(arr, n);
-            break;
-        case 4:
-            break;
-        case 5:
-            quickSort(arr, 0, n - 1);
-            printf("Sorted array: \n");
-            printArray(arr, n);
-            break;
-        case 6:
-            printf("Saindo do programa...\n");
-            break;
-        default:
-            printf("Digite uma opcao valida\n");
-        }
-
-    } while (op != 6);
+    menu(op, arr, n);
+    free(arr);
+    return 0;
 }

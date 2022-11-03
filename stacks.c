@@ -5,8 +5,6 @@
 /*
     • Pilhas são estruturas de dados que representam um conjunto de dados organizados em ordem linear e dinâmica.
 
-    • Cada elemento da pilha é chamado de nó e contém um campo de dados e um ponteiro para o próximo nó da pilha.
-
     • A pilha é uma estrutura de dados que permite a inserção e a remoção de elementos apenas no topo da pilha.
     LIFO -- last in, first out (último a entrar, primeiro a sair).
 */
@@ -15,9 +13,9 @@
 
 typedef struct stackElement
 {
-    char *data;                /* Se fosse int não precisaria alocar dinâmicamente e nem alocar espaço */
-    struct stackElement *next; // ponteiro para o próximo nó
-} StackElement;                // tipo de dado StackElement
+    char *data;
+    struct stackElement *next; // ponteiro para o próximo elemento da pilha
+} StackElement;
 
 typedef struct stackPointer
 {
@@ -73,7 +71,7 @@ void pop(Stack *stack)
     else
     {
         StackElement *aux = stack->top; // Elemento auxiliar para guardar o elemento que está no topo da pilha
-        stack->top = stack->top->next;  // Faz o topo apontar para o seguinte elemento da pilha a remover
+        stack->top = stack->top->next;  // Faz o topo apontar para o próximo elemento da pilha
         free(aux->data);
         free(aux); // Liberta a memória do elemento que está no topo da pilha
         stack->size--;
@@ -86,7 +84,7 @@ void printStack(Stack *stack)
 {
     if (stack->top == NULL)
     {
-        printf("A pilha está vazia!\n");
+        printf("A pilha esta vazia!\n");
     }
     else
     {

@@ -218,47 +218,41 @@ Recursão no lado não vazio
 Se o vetor estivesse desordenado em cada passo iria ordenar mais números
 */
 
-// Função que particiona o vetor
-int partition(int array[], int initial, int end)
+void quickSort(int *arr, int left, int right)
 {
+    int i, j, x, y;
 
-    /* Seleciona o último elemento como pivô */
-    int pivot = array[end];
+    i = left;
+    j = right;
+    x = arr[(left + right) / 2];
 
-    /* Índice para o maior elemento */
-    int left = (initial - 1);
-
-    for (int right = initial; right < end; right++)
+    while (i <= j)
     {
-        if (array[right] <= pivot)
+        while (arr[i] < x && i < right)
         {
-
-            /* Se um elemento menor que o pivô é encontrado, troca ele com o maior elemento apontado por left */
-            left++;
-            swap(&array[left], &array[right]);
+            i++;
+        }
+        while (arr[j] > x && j > left)
+        {
+            j--;
+        }
+        if (i <= j)
+        {
+            y = arr[i];
+            arr[i] = arr[j];
+            arr[j] = y;
+            i++;
+            j--;
         }
     }
 
-    // troca o elemento maior com o pivô
-    swap(&array[left + 1], &array[end]);
-
-    // retorna a posição do pivô
-    return (left + 1);
-}
-
-void quickSort(int array[], int initial, int end)
-{
-    if (initial < end)
+    if (j > left)
     {
-        /* encontre o elemento pivô de modo que os elementos menores que o pivô estejam
-        à esquerda dele e os elementos maiores que o pivô estejam à direita */
-        int partition_idx = partition(array, initial, end);
-
-        // Chamada recursiva para os elementos a esquerda do pivô
-        quickSort(array, initial, partition_idx - 1);
-
-        // Chamada recursiva para os elementos a direita do pivô
-        quickSort(array, partition_idx + 1, end);
+        quickSort(arr, left, j);
+    }
+    if (i < right)
+    {
+        quickSort(arr, i, right);
     }
 }
 
@@ -275,8 +269,9 @@ void menu(int op, int arr[], int n)
         printf("4. Selection Sort\n");
         printf("5. Merge Sort\n");
         printf("6. Quick Sort\n");
-        printf("7. Sair do programa\n");
-
+        printf("7. Imprimir Array\n");
+        printf("8. Sair do programa\n");
+        printf("\nDigite a opcao desejada: ");
         scanf("%d", &op);
         system("cls || clear");
 
@@ -301,13 +296,16 @@ void menu(int op, int arr[], int n)
             quickSort(arr, 0, n - 1);
             break;
         case 7:
+            printArray(arr, n);
+            break;
+        case 8:
             printf("Saindo do programa...\n");
             break;
         default:
             printf("Digite uma opcao valida\n");
         }
 
-    } while (op != 7);
+    } while (op != 8);
 }
 
 // _______________________________Main Function______________________________

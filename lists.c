@@ -14,6 +14,8 @@ remoção de elementos em qualquer posição da lista.
 
 */
 
+// -----------------------------List Methods-----------------------------
+
 typedef struct node
 {
     int data;          // campo de dados

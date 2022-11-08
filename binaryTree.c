@@ -23,196 +23,171 @@ Folhas - são os nós que não têm filhos; são os últimos nós da árvore.
 
 */
 
-typedef struct no
-{
-    int numero;
-    struct No *esquerda;
+/*definição da estrutura que representará cada elemento da árvore binária*/
+typedef struct No {
+    int valor;  /*será uma árvore que armazenará inteiros*/
+    struct No *esquerda;  /*ponteiros para fazer a ligação entre nós a esquerda e a direita*/
     struct No *direita;
 } No;
 
-void criarArvore(No **pRaiz)
-{
-    *pRaiz = NULL;
+typedef struct Arvore {
+    No *raiz;  /*ponteiro para o nó raiz da árvore*/
+} Arvore;
+
+/*função que cria uma árvore binária vazia*/
+Arvore *criarArvore() {
+    Arvore *arvore = (Arvore *) malloc(sizeof(Arvore));  /*aloca memória para a árvore*/
+    arvore->raiz = NULL;  /*inicializa a raiz como NULL*/
+    return arvore;
 }
 
-void insercao(No **pRaiz, int numero2)
-{
-    if (*pRaiz == NULL)
-    {
-        *pRaiz = (No *)malloc(sizeof(No));
-        (*pRaiz)->esquerda = NULL;
-        (*pRaiz)->direita = NULL;
-        (*pRaiz)->numero = numero2;
-    }
-    else
-    {
-        if (numero2 < ((*pRaiz)->numero))
-        {
-            insercao(&((*pRaiz)->esquerda), numero2);
-        }
-        else
-        {
-            insercao(&((*pRaiz)->direita), numero2);
-        }
-    }
+/*função que cria um nó da árvore binária*/
+No *criarNo(int valor) {
+    No *no = (No *) malloc(sizeof(No));  /*aloca memória para o nó*/
+    no->valor = valor;  /*atribui o valor ao nó*/
+    no->esquerda = NULL;  /*inicializa os ponteiros para os filhos como NULL*/
+    no->direita = NULL;
+    return no;
 }
 
-No *MaiorDireita(No **no)
-{
-    if ((*no)->direita != NULL)
-    {
-        return MaiorDireita(&(*no)->direita);
-    }
-    else
-    {
-        No *aux = *no;
-
-        if ((*no)->esquerda != NULL) // se nao houver essa verificacao, esse nó vai perder todos os seus filhos da esquerda!
-        {
-            *no = (*no)->esquerda;
+/*função que insere um nó na árvore binária*/
+void inserirNo(No *raiz, No *no) {
+    if (no->valor < raiz->valor) {  /*se o valor do nó for menor que o valor do nó raiz*/
+        if (raiz->esquerda == NULL) {  /*se o nó raiz não tiver filho a esquerda*/
+            raiz->esquerda = no;  /*o nó passa a ser o filho a esquerda do nó raiz*/
+        } else {
+            inserirNo(raiz->esquerda, no);  /*se o nó raiz tiver filho a esquerda, chama a função novamente passando o filho a esquerda como raiz*/
         }
-        else
-        {
-            *no = NULL;
-            return aux;
+    } else if (no->valor > raiz->valor) {  /*se o valor do nó for maior que o valor do nó raiz*/
+        if (raiz->direita == NULL) {  /*se o nó raiz não tiver filho a direita*/
+            raiz->direita = no;  /*o nó passa a ser o filho a direita do nó raiz*/
+        } else {
+            inserirNo(raiz->direita, no);  /*se o nó raiz tiver filho a direita, chama a função novamente passando o filho a direita como raiz*/
         }
+    } else {
+        free(no);
     }
 }
 
-/* No *MenorEsquerda(No **no)
-{
-    if ((*no)->esquerda != NULL)
-    {
-        return MenorEsquerda(&(*no)->esquerda);
+/*função que insere um valor na árvore binária*/
+void inserir(Arvore *arvore, int valor) {
+    No *no = criarNo(valor);  /*cria um nó com o valor passado como parâmetro*/
+    if (arvore->raiz == NULL) {  /*se a árvore estiver vazia*/
+        arvore->raiz = no;  /*o nó criado passa a ser a raiz da árvore*/
+    } else {
+        inserirNo(arvore->raiz, no);  /*se a árvore não estiver vazia, chama a função inserirNo passando a raiz da árvore como parâmetro*/
     }
-    else
-    {
-        No *aux = *no;
-        if ((*no)->direita != NULL) // se nao houver essa verificacao, esse nó vai perder todos os seus filhos da direita!
-        {
-            *no = (*no)->direita;
-        }
-        else
-        {
-            *no = NULL;
-        }
-        return aux;
-    }
-} */
+}
 
-void remover(No **pRaiz, int numero)
-{
-    if (*pRaiz == NULL)
-    { // esta verificacao serve para caso o numero nao exista na arvore.
-        printf("\nNumero nao existe na arvore!\n");
-        getch();
-        return;
-    }
-    if (numero < (*pRaiz)->numero)
-        remover(&(*pRaiz)->esquerda, numero);
-    else if (numero > (*pRaiz)->numero)
-        remover(&(*pRaiz)->direita, numero);
-    else
-    { // se nao eh menor nem maior, logo, eh o numero que estou procurando! :)
-        No *pAux = *pRaiz;
-        if (((*pRaiz)->esquerda == NULL) && ((*pRaiz)->direita == NULL))
-        { // se nao houver filhos...
-            free(pAux);
-            (*pRaiz) = NULL;
-        }
-        else
-        { // so tem o filho da direita
-            if ((*pRaiz)->esquerda == NULL)
-            {
-                (*pRaiz) = (*pRaiz)->direita;
-                pAux->direita = NULL;
-                free(pAux);
-                pAux = NULL;
-            }
-            else
-            { // so tem filho da esquerda
-                if ((*pRaiz)->direita == NULL)
-                {
-                    (*pRaiz) = (*pRaiz)->esquerda;
-                    pAux->esquerda = NULL;
-                    free(pAux);
-                    pAux = NULL;
+/*função que remove um valor de uma arvore binaria*/
+void remover(Arvore *arvore, int valor) {
+    No *no = arvore->raiz;  /*recebe a raiz da árvore*/
+    No *pai = NULL;  /*ponteiro para o pai do nó que será removido*/
+    while (no != NULL) {  /*enquanto o nó não for NULL*/
+        if (valor == no->valor) {  /*se o valor do nó for igual ao valor passado como parâmetro*/
+            if (no->esquerda == NULL && no->direita == NULL) {  /*se o nó não tiver filhos*/
+                if (pai == NULL) {  /*se o nó não tiver pai*/
+                    arvore->raiz = NULL;  /*a árvore fica vazia*/
+                } else {
+                    if (pai->esquerda == no) {  /*se o nó for filho a esquerda do pai*/
+                        pai->esquerda = NULL;  /*o pai não tem mais filho a esquerda*/
+                    } else {
+                        pai->direita = NULL;  /*se o nó for filho a direita do pai, o pai não tem mais filho a direita*/
+                    }
                 }
-                else
-                {                                             // Escolhi fazer o maior filho direito da subarvore esquerda.
-                    pAux = MaiorDireita(&(*pRaiz)->esquerda); // se vc quiser usar o Menor da esquerda, so o que mudaria seria isso:
-                    pAux->esquerda = (*pRaiz)->esquerda;      //        pAux = MenorEsquerda(&(*pRaiz)->direita);
-                    pAux->direita = (*pRaiz)->direita;
-                    (*pRaiz)->esquerda = (*pRaiz)->direita = NULL;
-                    free((*pRaiz));
-                    *pRaiz = pAux;
-                    pAux = NULL;
+                free(no);  /*libera a memória do nó*/
+            } else if (no->esquerda == NULL) {  /*se o nó tiver filho a direita e não tiver filho a esquerda*/
+                if (pai == NULL) {  /*se o nó não tiver pai*/
+                    arvore->raiz = no->direita;  /*a raiz da árvore passa a ser o filho a direita do nó*/
+                } else {
+                    if (pai->esquerda == no) {  /*se o nó for filho a esquerda do pai*/
+                        pai->esquerda = no->direita;  /*o pai passa a ter como filho a direita o filho a direita do nó*/
+                    } else {
+                        pai->direita = no->direita;  /*se o nó for filho a direita do pai, o pai passa a ter como filho a direita o filho a direita do nó*/
+                    }
                 }
+                free(no);
+            } else if (no->direita == NULL) {  /*se o nó tiver filho a esquerda e não tiver filho a direita*/   
+                if (pai == NULL) {  /*se o nó não tiver pai*/
+                    arvore->raiz = no->esquerda;  /*a raiz da árvore passa a ser o filho a esquerda do nó*/
+                } else {
+                    if (pai->esquerda == no) {  /*se o nó for filho a esquerda do pai*/
+                        pai->esquerda = no->esquerda;  /*o pai passa a ter como filho a esquerda o filho a esquerda do nó*/
+                    } else {
+                        pai->direita = no->esquerda;  /*se o nó for filho a direita do pai, o pai passa a ter como filho a esquerda o filho a esquerda do nó*/
+                    }
+                }
+                free(no);
+            } else {  /*se o nó tiver dois filhos*/
+                No *aux = no->direita;  /*recebe o filho a direita do nó*/
+                No *auxPai = no;  /*recebe o nó*/
+                while (aux->esquerda != NULL) {  /*enquanto o filho a esquerda do nó não for NULL*/
+                    auxPai = aux;  /*o pai do nó passa a ser o nó*/
+                    aux = aux->esquerda;  /*o nó passa a ser o filho a esquerda do nó*/
+                }
+                no->valor = aux->valor;  /*o valor do nó passa a ser o valor do nó auxiliar*/
+                if (auxPai->esquerda == aux) {  /*se o nó auxiliar for filho a esquerda do pai do nó*/
+                    auxPai->esquerda = aux->direita;  /*o pai do nó passa a ter como filho a esquerda o filho a direita do nó auxiliar*/
+                } else {
+                    auxPai->direita = aux->direita;  /*se o nó auxiliar for filho a direita do pai do nó, o pai do nó passa a ter como filho a direita o filho a direita do nó auxiliar*/
+                }
+                free(aux);  /*libera a memória do nó auxiliar*/
             }
+            return;
+        } else if (valor < no->valor) {  /*se o valor passado como parâmetro for menor que o valor do nó*/
+            pai = no;  /*o pai do nó passa a ser o nó*/
+            no = no->esquerda;  /*o nó passa a ser o filho a esquerda do nó*/
+        } else {
+            pai = no;  /*se o valor passado como parâmetro for maior que o valor do nó, o pai do nó passa a ser o nó*/
+            no = no->direita;  /*o nó passa a ser o filho a direita do nó*/
         }
     }
+    printf("\nValor nao encontrado\n");  /*se o valor não for encontrado, imprime a mensagem*/
 }
 
-/*
-Temos três tipo de consultas:
+    
 
-- Em ordem: neste tipo de consulta cada árvore é mostrada primeiramente com o ramo da esquerda, depois a raiz e por fim o ramo da direita.
-- Pré-ordem: neste tipo de consulta cada árvore é mostrada primeiramente com a raiz, depois o ramo da esquerda e por fim o ramo da direita.
-- Pós-ordem: neste tipo de consulta cada árvore é mostrada primeiramente com o ramo da esquerda, depois o ramo da direita e por fim a raiz.
 
-*/
-void imprimirEmOrdem(No *pRaiz)
-{
-    if (pRaiz != NULL)
-    {
-        imprimirEmOrdem(pRaiz->esquerda);
-        printf("%d ", pRaiz->numero);
-        imprimirEmOrdem(pRaiz->direita);
-    }
+
+/*função que imprime a árvore binária em pré-ordem*/
+void imprimirPreOrdem(No *raiz) {
+    if (raiz != NULL) {  /*se a raiz não for NULL*/
+        printf("%d ", raiz->valor);  /*imprime o valor do nó*/
+        imprimirPreOrdem(raiz->esquerda);  /*chama a função novamente passando o filho a esquerda como raiz*/
+        imprimirPreOrdem(raiz->direita);  /*chama a função novamente passando o filho a direita como raiz*/
+    } 
 }
 
-void imprimirPreOrdem(No *pRaiz)
-{
-    if (pRaiz != NULL)
-    {
-        printf("%d ", pRaiz->numero);
-        imprimirPreOrdem(pRaiz->esquerda);
-        imprimirPreOrdem(pRaiz->direita);
-    }
+/*função que imprime a árvore binária em ordem*/
+void imprimirOrdem(No *raiz) {
+    if (raiz != NULL) {  /*se a raiz não for NULL*/
+        imprimirOrdem(raiz->esquerda);  /*chama a função novamente passando o filho a esquerda como raiz*/
+        printf("%d ", raiz->valor);  /*imprime o valor do nó*/
+        imprimirOrdem(raiz->direita);  /*chama a função novamente passando o filho a direita como raiz*/
+    } 
 }
 
-void imprimirPosOrdem(No *pRaiz)
-{
-    if (pRaiz != NULL)
-    {
-        imprimirPosOrdem(pRaiz->esquerda);
-        imprimirPosOrdem(pRaiz->direita);
-        printf("%d ", pRaiz->numero);
-    }
+/*função que imprime a árvore binária em pós-ordem*/
+void imprimirPosOrdem(No *raiz) {
+    if (raiz != NULL) {  /*se a raiz não for NULL*/
+        imprimirPosOrdem(raiz->esquerda);  /*chama a função novamente passando o filho a esquerda como raiz*/
+        imprimirPosOrdem(raiz->direita);  /*chama a função novamente passando o filho a direita como raiz*/
+        printf("%d ", raiz->valor);  /*imprime o valor do nó*/
+    } 
 }
 
-void apagarArvore(No *pRaiz)
-{
-    // Funcao para liberar a memoria utilizada pela arvore
-    if (pRaiz != NULL)
-    {
-        apagarArvore(pRaiz->esquerda);
-        apagarArvore(pRaiz->direita);
-        free(pRaiz);
-        pRaiz = NULL;
-    }
-}
+// -----------------------------Menu Function-----------------------------
 
-void menu(int op, No *tree, int num)
+void menu(int op, Arvore *arvore, int num)
 {
     do
     {
         printf("\n\tO que voce deseja fazer?\n\n");
         printf("1 - Inserir elemento na arvore\n");
-        printf("2 - Remover elemento da arvore\n");
-        printf("3 - Imprimir arvore em Ordem\n");
-        printf("4 - Imprimir arvore em Pre-Ordem\n");
-        printf("5 - Imprimir arvore em Pos-Ordem\n");
+        printf("2 - Imprimir arvore em pre ordem\n");
+        printf("3 - Imprimir arvore em ordem\n");
+        printf("4 - Imprimir arvore em pos ordem\n");
+        printf("5 - Remover elemento da arvore\n");
         printf("6 - Sair\n\n");
         printf("Digite a opcao desejada: ");
 
@@ -224,24 +199,21 @@ void menu(int op, No *tree, int num)
         case 1:
             printf("Digite o numero que deseja inserir: ");
             scanf("%d", &num);
-            insercao(&tree, num);
+            inserir(arvore, num);
             break;
         case 2:
-            printf("Digite o numero que deseja remover: ");
-            scanf("%d", &num);
-            remover(&tree, num);
+            imprimirPreOrdem(arvore->raiz);
             break;
         case 3:
-            printf("Arvore em Ordem: ");
-            imprimirEmOrdem(tree);
+            imprimirOrdem(arvore->raiz);
             break;
         case 4:
-            printf("Arvore em Pre-Ordem: ");
-            imprimirPreOrdem(tree);
+            imprimirPosOrdem(arvore->raiz);
             break;
         case 5:
-            printf("Arvore em Pos-Ordem: ");
-            imprimirPosOrdem(tree);
+            printf("Digite o numero que deseja remover: ");
+            scanf("%d", &num);
+            remover(arvore, num);
             break;
         case 6:
             printf("Saindo...\n");
@@ -252,13 +224,21 @@ void menu(int op, No *tree, int num)
     } while (op != 6);
 }
 
+// -----------------------------Main Function-----------------------------
+
 int main()
 {
-    No *tree;
+    Arvore *arvore = criarArvore();
     int op, num;
 
-    criarArvore(&tree);
-    menu(op, tree, num);
-    apagarArvore(tree);
+    menu(op, arvore, num);
+
     return 0;
 }
+
+
+
+
+
+
+

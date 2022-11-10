@@ -27,19 +27,14 @@ typedef struct queuePointer
     int size;            // tamanho da fila
 } Queue;
 
-// Função para inicializar a fila
-void initialize(Queue *queue)
-{
-    queue->first = NULL;
-    queue->last = NULL;
-    queue->size = 0;
-}
 
 // Função para criar fila
 Queue *createQueue()
 {
     Queue *queue = (Queue *)malloc(sizeof(Queue));
-    initialize(queue);
+    queue->first = NULL;
+    queue->last = NULL;
+    queue->size = 0;
     return queue;
 }
 

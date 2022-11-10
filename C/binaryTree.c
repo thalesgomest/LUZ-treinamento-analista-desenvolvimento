@@ -94,15 +94,15 @@ No* remover(No *raiz, int valor) {
             free(raiz);  /*libera a memória do nó raiz*/
             raiz = NULL;  /*atribui NULL ao nó raiz*/
         } else if (raiz->esquerda == NULL) {  /*se o nó raiz tiver apenas o filho a direita*/
-            No *no = raiz;  /*cria um nó auxiliar e atribui o nó raiz a ele*/
+            No *aux = raiz;  /*cria um nó auxiliar e atribui o nó raiz a ele*/
             raiz = raiz->direita;  /*o nó raiz passa a ser o filho a direita do nó raiz*/
             printf("\nNo com um filho removido: %d\n", valor);
-            free(no);  /*libera a memória do nó auxiliar*/
+            free(aux);  /*libera a memória do nó auxiliar*/
         } else if (raiz->direita == NULL) {  /*se o nó raiz tiver apenas o filho a esquerda*/
-            No *no = raiz;  /*cria um nó auxiliar e atribui o nó raiz a ele*/
+            No *aux = raiz;  /*cria um nó auxiliar e atribui o nó raiz a ele*/
             raiz = raiz->esquerda;  /*o nó raiz passa a ser o filho a esquerda do nó raiz*/
             printf("\nNo com um filho removido: %d\n", valor);
-            free(no);  /*libera a memória do nó auxiliar*/
+            free(aux);  /*libera a memória do nó auxiliar*/
         } else {  /*se o nó raiz tiver os dois filhos*/
             No *aux = raiz->esquerda;  /*cria um nó auxiliar e atribui o filho a esquerda do nó raiz a ele*/
             while (aux->direita != NULL) {  /*enquanto o filho a direita do nó auxiliar não for NULL*/
@@ -124,7 +124,6 @@ No* esvaziarArvore(No *raiz) {
         esvaziarArvore(raiz->direita);  /*chama a função novamente passando o filho a direita como raiz*/
         free(raiz);  /*libera a memória do nó raiz*/
     }
-    return NULL;
 }
 
 /*função que imprime a árvore binária em pré-ordem*/
@@ -195,10 +194,12 @@ void menu(int op, Arvore *arvore, int num)
             arvore->raiz = remover(arvore->raiz, num);
             break;
         case 6:
-            arvore->raiz = esvaziarArvore(arvore->raiz);
+            esvaziarArvore(arvore->raiz);
+            arvore->raiz = NULL;
             break;
         case 7:
             printf("Saindo...\n");
+            esvaziarArvore(arvore->raiz);
             break;
         default:
             printf("Digite uma opcao valida!\n");
@@ -206,13 +207,31 @@ void menu(int op, Arvore *arvore, int num)
     } while (op != 7);
 }
 
+void preencher(Arvore *arvore) {
+    inserir(arvore, 50);
+    inserir(arvore, 30);
+    inserir(arvore, 80);
+    inserir(arvore, 25);
+    inserir(arvore, 43);
+    inserir(arvore, 57);
+    inserir(arvore, 98);
+    inserir(arvore, 10);
+    inserir(arvore, 33);
+    inserir(arvore, 52);
+    inserir(arvore, 77);
+    inserir(arvore, 22);
+    inserir(arvore, 65);
+}
+
+
+
 // -----------------------------Main Function-----------------------------
 
 int main()
 {
     Arvore *arvore = criarArvore();
     int op, num;
-
+    preencher(arvore); 
     menu(op, arvore, num);
 
     return 0;
